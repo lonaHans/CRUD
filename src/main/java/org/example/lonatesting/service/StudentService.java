@@ -108,4 +108,22 @@ public class StudentService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public StudentResponse getStudentByEmail(String email) {
+
+        Students student = studentRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with this email: " + email));
+
+        return mapToResponse(student);
+    }
+
+    @Transactional(readOnly = true)
+    public StudentResponse getStudentByLastName(String lastName){
+        Students student = studentRepository.findByLastName(lastName)
+                .orElseThrow(() -> new ResourceNotFoundException("Student by " + lastName + " is not found"));
+
+        return mapToResponse(student);
+    }
+
+
 }
