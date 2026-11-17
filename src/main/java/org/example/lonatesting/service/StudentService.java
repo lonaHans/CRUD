@@ -7,6 +7,9 @@ import org.example.lonatesting.Entity.Students;
 import org.example.lonatesting.exceptions.DuplicateResourceException;
 import org.example.lonatesting.exceptions.ResourceNotFoundException;
 import org.example.lonatesting.repository.StudentRepository;
+import org.springframework.data.domain.Page;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -123,6 +126,10 @@ public class StudentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Student by " + lastName + " is not found"));
 
         return mapToResponse(student);
+    }
+
+    public Page<StudentResponse> getAllStudents(Pageable pageable){
+        return studentRepository.findAll(pageable).map(this::mapToResponse);
     }
 
 

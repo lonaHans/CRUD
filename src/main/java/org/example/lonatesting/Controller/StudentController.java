@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.example.lonatesting.DTO.StudentRequest;
 import org.example.lonatesting.DTO.StudentResponse;
 import org.example.lonatesting.service.StudentService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,13 +34,13 @@ public class StudentController {
                 .body(response);
     }
 
-    @GetMapping
-    public ResponseEntity<List<StudentResponse>> getAllStudents() {
-
-        return ResponseEntity.ok(
-                studentService.getAllStudents()
-        );
-    }
+//    @GetMapping
+//    public ResponseEntity<List<StudentResponse>> getAllStudents() {
+//
+//        return ResponseEntity.ok(
+//                studentService.getAllStudents()
+//        );
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<StudentResponse> getStudentById(
@@ -85,6 +87,11 @@ public class StudentController {
         return ResponseEntity.ok(
                 studentService.getStudentByLastName(lastName)
         );
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<StudentResponse>> getAllStudents(Pageable pageable){
+        return ResponseEntity.ok(studentService.getAllStudents(pageable));
     }
 
 }
