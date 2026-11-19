@@ -3,9 +3,11 @@ package org.example.lonatesting.service;
 
 import org.example.lonatesting.DTO.StudentRequest;
 import org.example.lonatesting.DTO.StudentResponse;
+import org.example.lonatesting.Entity.Department;
 import org.example.lonatesting.Entity.Students;
 import org.example.lonatesting.exceptions.DuplicateResourceException;
 import org.example.lonatesting.exceptions.ResourceNotFoundException;
+import org.example.lonatesting.repository.DepartmentRepository;
 import org.example.lonatesting.repository.StudentRepository;
 import org.springframework.data.domain.Page;
 
@@ -18,9 +20,12 @@ import java.util.List;
 @Service
 public class StudentService {
     private final StudentRepository studentRepository;
+    private final DepartmentRepository departmentRepository;
 
-    public StudentService(StudentRepository studentRepository) {
+
+    public StudentService(StudentRepository studentRepository, DepartmentRepository departmentRepository) {
         this.studentRepository = studentRepository;
+        this.departmentRepository = departmentRepository;
     }
 
     @Transactional
@@ -32,10 +37,15 @@ public class StudentService {
             );
         }
 
+        Department department = departmentRepository.findById(request.departmentId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Department not found: " + request.departmentId()
+                ));
         Students student = new Students();
         student.setFirstName(request.firstName());
         student.setLastName(request.lastName());
         student.setEmail(request.email());
+        student.setDepartment(department);
 
         Students savedStudent = studentRepository.save(student);
 
@@ -107,7 +117,9 @@ public class StudentService {
                 student.getId(),
                 student.getFirstName(),
                 student.getLastName(),
-                student.getEmail()
+                student.getEmail(),
+                student.getDepartment().getId(),
+                student.getDepartment().getName()
         );
     }
 
@@ -130,6 +142,22 @@ public class StudentService {
 
     public Page<StudentResponse> getAllStudents(Pageable pageable){
         return studentRepository.findAll(pageable).map(this::mapToResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public List<StudentResponse> findByDepartment(Long departmentId) {
+
+        if (!departmentRepository.existsById(departmentId)) {
+            throw new ResourceNotFoundException(
+                    "Department not found: " + departmentId
+            );
+        }
+
+        return studentRepository
+                .findByDepartmentId(departmentId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
 

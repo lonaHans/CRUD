@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +21,10 @@ public class Department {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @Column(name = "department_id")
     private Long id;
 
-    @Column(nullable = false,unique = true)
+    @Column(name = "department_name", nullable = false,unique = true)
     private String name;
 
     @Column(nullable = false)

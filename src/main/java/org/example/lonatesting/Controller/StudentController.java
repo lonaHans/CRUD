@@ -94,4 +94,13 @@ public class StudentController {
         return ResponseEntity.ok(studentService.getAllStudents(pageable));
     }
 
+    @GetMapping("/department/{departmentId}")
+    public ResponseEntity<List<StudentResponse>>
+    findByDepartment(@PathVariable Long departmentId) {
+
+        return ResponseEntity.ok(
+                studentService.findByDepartment(departmentId)
+        );
+    }
+
 }
